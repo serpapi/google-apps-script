@@ -6,6 +6,7 @@ var api_key = ""
 * Returns Google search results
 *
 * @param {"cars"} query REQUIRED The root domain, example: "nytimes.com", DO NOT include protocol (http/https)
+* @param {Austin,TX,Texas,United States} location OPTIONAL normalized location for google: =GOOGLELOCATION("city, state, country"). see: https://serpapi.com/search-api. Default is `null`.
 * @param {"en"} language OPTIONAL The country database you want to search from. Default is US
 * @param {"us"} country OPTIONAL Leave this blank for current data. YYYYMM format for historical reports, note: always reports on the 15th of the month.
 * @param {10} num OPTIONAL true to EXCLUDE column headers or false to include. Default is false.
@@ -14,7 +15,7 @@ var api_key = ""
 * @return Returns organic keywords count, organic traffic, organic cost, adwords data
 * @customfunction
 */
-function GOOGLESEARCH(query, opt_language, opt_country, opt_num, opt_device, opt_offset) {
+function GOOGLESEARCH(query, opt_location, opt_language, opt_country, opt_num, opt_device, opt_offset) {
   if(query == null) {
     return "query must be provided"
   }
@@ -25,6 +26,10 @@ function GOOGLESEARCH(query, opt_language, opt_country, opt_num, opt_device, opt
   
   try {
     var url = "https://serpapi.com/search?q=" + query + "&api_key=" + api_key;
+    
+    if(opt_location != null) {
+     url += '&location=' + encodeURIComponent(opt_location)
+    }
     
     if(opt_language != null) {
      url += "&hl=" + opt_language;
@@ -52,7 +57,7 @@ function GOOGLESEARCH(query, opt_language, opt_country, opt_num, opt_device, opt
     
     var resultArray = []
     // iterate on all organic_results
-    res["organic_results"].forEach(function(item) {
+    rsp["organic_results"].forEach(function(item) {
       // extract the link per search result
       resultArray.push(item.link)
     })
